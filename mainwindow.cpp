@@ -14,8 +14,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  #ifdef Q_OS_LINUX
   setAttribute(Qt::WA_TranslucentBackground);
-//  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+  #endif
+
+  #ifdef Q_OS_WIN
+  setWindowOpacity(0.5);
+  #endif
 
   QLabel *screenGeometry = new QLabel(this);
   QScreen *screen = QGuiApplication::primaryScreen();
@@ -36,7 +41,13 @@ MainWindow::MainWindow(QWidget *parent)
   textClose->adjustSize();
   textClose->setStyleSheet("background-color: red; color: white;");
 
+  QLabel *textCtrl = new QLabel(this);
+  textCtrl->setText("Use ctrl");
+  textCtrl->adjustSize();
+  textCtrl->setStyleSheet("background-color: red; color: white;");
+
   screenGeometry->move(textClose->width() + 10, 0);
+  textCtrl->move(180, 0);
 
   textPos = new QLabel(this);
   textPos->setStyleSheet("padding: 0 3px 0 3px; color: red; background-color: rgba(255, 255, 255, 128);");
@@ -77,14 +88,12 @@ void MainWindow::checkMove() {
   update();
 }
 
-int cnt = 0;
 void MainWindow::paintEvent(QPaintEvent *) {
   QPainter painter(this);
+
   painter.setPen(QPen(Qt::blue, 1));
   painter.drawLine(0, y, screenW, y);
   painter.drawLine(x, 0, x, screenH);
-
-  qDebug() << __FUNCTION__ << cnt++;
 
   if(ctrlPress) {
     qDebug() << "CTRL" << ctrlPress;
