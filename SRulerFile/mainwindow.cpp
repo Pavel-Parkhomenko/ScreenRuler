@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     textCtrl->setStyleSheet("background-color: red; color: white;");
 
     screenGeometry->move(textClose->width() + 10, 0);
-    textCtrl->move(180, 0);
+    textCtrl->move(screenGeometry->x() + screenGeometry->width() + 10, 0);
 
     textPos = new QLabel(this);
     textPos->setStyleSheet(
@@ -66,6 +66,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     formFields->show();
     formFields->setFocus();
     connect(formFields, &FormFields::userClickCloseSig, this, &MainWindow::userClickCloseSlot);
+
+    x = screenW / 2;
+    y = screenH / 2;
+
+    textPos->setText(QString("(%1,%2)").arg(x).arg(y));
+    textPos->adjustSize();
+    checkMove();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)

@@ -37,7 +37,10 @@ private:
     bool readJsonFile(const QString &fileName);
     void processJsonObject(const QJsonObject &obj);
     void processJsonArray(const QJsonArray &array);
-    bool savePlayersToJson(const QVector<DataPlayer> &players, const QString &fileName);
+    bool savePlayersToJson(QVector<DataPlayer> &players, const QString &fileName);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void listItemClickSlot(QListWidgetItem *item);

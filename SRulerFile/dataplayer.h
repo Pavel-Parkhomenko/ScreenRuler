@@ -43,10 +43,14 @@ public:
     bool getIsChecked() const;
     void setIsChecked(bool newIsChecked);
 
+    bool getIsNewObj() const;
+    void setIsNewObj(bool newIsNewObj);
+
 private:
     QString player;
     Coords coords;
     bool isChecked;
+    bool isNewObj = false;
 };
 
 #endif // DATAPLAYER_H

@@ -56,6 +56,17 @@ FormFields::FormFields(QWidget *parent) :
 
     QListWidget *listWidget = new QListWidget();
 
+    listWidget->setStyleSheet(
+        R"(
+        QListWidget::item {
+            border-bottom : 1px solid #ebdedd;
+        }
+        QListWidget::item:selected {
+            border-bottom: 1px solid #145e16;
+        }
+        )"
+    );
+
     for (int i = 0; i < dataPlayers.size(); ++i)
     {
         QLabel *label = new QLabel();
@@ -63,6 +74,7 @@ FormFields::FormFields(QWidget *parent) :
         const DataPlayer &p = dataPlayers[i];
         label->setText(QString("%1: %2").arg(p.getPlayer(), p.getCoords().getCoordsAsStr()));
         QListWidgetItem *item = new QListWidgetItem(listWidget);
+
 
         item->setData(Qt::UserRole + 1, i);
 
@@ -97,13 +109,18 @@ FormFields::FormFields(QWidget *parent) :
     vl->addWidget(listWidget);
     vl->addLayout(hlBtn);
 
-    if(!curPlayer) curPlayer = new DataPlayer();
+    if (!curPlayer)
+    {
+        curPlayer = new DataPlayer();
+        curPlayer->setIsNewObj(true);
+    }
 }
 
 void FormFields::listItemClickSlot(QListWidgetItem *item)
 {
     int playerDataInd = item->data(Qt::UserRole + 1).toInt();
     curPlayer = &dataPlayers[playerDataInd];
+    curPlayer->setIsNewObj(false);
 
     editName->setText(curPlayer->getPlayer());
     editCoords->setText(curPlayer->getCoords().getCoordsAsStr());
@@ -163,15 +180,22 @@ void FormFields::changeRadioBySpace()
 
 }
 
-bool FormFields::savePlayersToJson(const QVector<DataPlayer> &players, const QString &fileName)
+bool FormFields::savePlayersToJson(QVector<DataPlayer> &players, const QString &fileName)
 {
     QJsonArray playersArray;
+    curPlayer->setIsChecked(true);
+
+    if (curPlayer->getIsNewObj())
+    {
+        players.push_back(*curPlayer);
+    }
 
     for (const DataPlayer &player : players)
     {
         QJsonObject playerObject;
         playerObject["player"] = player.getPlayer();
         playerObject["coords"] = player.getCoords().getCoordsAsStr();
+        playerObject["isChecked"] = player.getIsChecked();
         playersArray.append(playerObject);
     }
 
@@ -261,6 +285,11 @@ void FormFields::processJsonObject(const QJsonObject &obj) {
         dataPlayer.setIsChecked(obj["isChecked"].toBool());
 
     dataPlayers.push_back(dataPlayer);
+}
+
+void FormFields::closeEvent(QCloseEvent *event) {
+    event->accept();
+    emit userClickCloseSig();
 }
 
 FormFields::~FormFields()

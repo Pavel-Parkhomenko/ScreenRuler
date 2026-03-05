@@ -84,3 +84,13 @@ void DataPlayer::setIsChecked(bool newIsChecked)
 {
     isChecked = newIsChecked;
 }
+
+bool DataPlayer::getIsNewObj() const
+{
+    return isNewObj;
+}
+
+void DataPlayer::setIsNewObj(bool newIsNewObj)
+{
+    this->isNewObj = newIsNewObj;
+}
