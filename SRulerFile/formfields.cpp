@@ -28,9 +28,9 @@ FormFields::FormFields(QWidget *parent) :
 #endif
 
 #ifdef Q_OS_WIN
-    setAttribute(Qt::WA_StyledBackground);
-    this->setObjectName("FormFields");
-    this->setStyleSheet("#FormFields { background-color: rgba(0, 0, 0, 0); } ");
+    // setAttribute(Qt::WA_StyledBackground);
+    // this->setObjectName("FormFields");
+    // this->setStyleSheet("#FormFields { background-color: rgba(0, 0, 0, 0); } ");
 #endif
 
     this->setWindowTitle("Настройка");

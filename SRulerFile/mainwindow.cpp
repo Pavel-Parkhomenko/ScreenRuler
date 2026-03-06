@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 #endif
 
 #ifdef Q_OS_WIN
-    setWindowOpacity(0.5);
+    setWindowOpacity(0.2);
 #endif
 
     QLabel *screenGeometry = new QLabel(this);
