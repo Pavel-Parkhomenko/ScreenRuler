@@ -28,24 +28,24 @@ FormFields::FormFields(QWidget *parent) :
 #endif
 
 #ifdef Q_OS_WIN
-    setWindowOpacity(0.5);
+    setAttribute(Qt::WA_StyledBackground);
+    this->setObjectName("FormFields");
+    this->setStyleSheet("#FormFields { background-color: rgba(0, 0, 0, 0); } ");
 #endif
 
     this->setWindowTitle("Настройка");
-
-    this->setFocusPolicy(Qt::StrongFocus);
-    this->setStyleSheet("background-color: white;");
-
     this->setMinimumSize(350, 300);
 
     readJsonFile("DATA.json");
 
     QGroupBox *groupBox = new QGroupBox("Настройки выбора");
-
     nextCheck   = new QRadioButton("Вперед");
+    nextCheck->setStyleSheet("color: #fcba03;");
     nextCheck->setChecked(true);
     prevCheck   = new QRadioButton("Назад");
+    prevCheck->setStyleSheet("color: red;");
     centerCheck = new QRadioButton("Центр");
+    centerCheck->setStyleSheet("color: blue;");
 
     QHBoxLayout *hlCheck = new QHBoxLayout();
     hlCheck->addWidget(nextCheck);
@@ -55,14 +55,13 @@ FormFields::FormFields(QWidget *parent) :
     groupBox->setLayout(hlCheck);
 
     QListWidget *listWidget = new QListWidget();
-
     listWidget->setStyleSheet(
         R"(
         QListWidget::item {
-            border-bottom : 1px solid #ebdedd;
+            border-bottom : 2px solid #ebdedd;
         }
         QListWidget::item:selected {
-            border-bottom: 1px solid #145e16;
+            border-bottom: 2px solid #145e16;
         }
         )"
     );
@@ -81,7 +80,8 @@ FormFields::FormFields(QWidget *parent) :
         listWidget->setItemWidget(item, label);
     }
 
-    connect(listWidget, &QListWidget::itemClicked, this, &FormFields::listItemClickSlot);
+    // connect(listWidget, &QListWidget::itemClicked, this, &FormFields::listItemClickSlot);
+    connect(listWidget, &QListWidget::currentItemChanged, this, &FormFields::listItemClickSlot);
 
     QHBoxLayout *hlEdit = new QHBoxLayout();
     editName = new QLineEdit();
@@ -113,17 +113,22 @@ FormFields::FormFields(QWidget *parent) :
     {
         curPlayer = new DataPlayer();
         curPlayer->setIsNewObj(true);
+        curPlayer->setIsEdit(true);
     }
 }
 
 void FormFields::listItemClickSlot(QListWidgetItem *item)
 {
     int playerDataInd = item->data(Qt::UserRole + 1).toInt();
+    curPlayer->setIsEdit(false);
     curPlayer = &dataPlayers[playerDataInd];
     curPlayer->setIsNewObj(false);
+    curPlayer->setIsEdit(true);
 
     editName->setText(curPlayer->getPlayer());
     editCoords->setText(curPlayer->getCoords().getCoordsAsStr());
+
+    emit needPaintCircleSig(curPlayer->getCoords());
 }
 
 void FormFields::btnOkClickSlot()
@@ -158,6 +163,8 @@ void FormFields::setNewCoords(double x, double y)
 
     editName->setText(curPlayer->getPlayer());
     editCoords->setText(curPlayer->getCoords().getCoordsAsStr());
+
+    emit needPaintCircleSig(curPlayer->getCoords());
 }
 
 void FormFields::changeRadioBySpace()
@@ -168,8 +175,6 @@ void FormFields::changeRadioBySpace()
 
     if (CUR_TR == 4)
         CUR_TR = 1;
-
-    qDebug() << "space " << CUR_TR;
 
     if (CUR_TR == 1)
         nextCheck->setChecked(true);
@@ -195,7 +200,7 @@ bool FormFields::savePlayersToJson(QVector<DataPlayer> &players, const QString &
         QJsonObject playerObject;
         playerObject["player"] = player.getPlayer();
         playerObject["coords"] = player.getCoords().getCoordsAsStr();
-        playerObject["isChecked"] = player.getIsChecked();
+        playerObject["isChecked"] = player.getIsEdit() ? true : false;
         playersArray.append(playerObject);
     }
 

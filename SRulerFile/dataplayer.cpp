@@ -94,3 +94,13 @@ void DataPlayer::setIsNewObj(bool newIsNewObj)
 {
     this->isNewObj = newIsNewObj;
 }
+
+bool DataPlayer::getIsEdit() const
+{
+    return isEdit;
+}
+
+void DataPlayer::setIsEdit(bool newIsEdit)
+{
+    isEdit = newIsEdit;
+}

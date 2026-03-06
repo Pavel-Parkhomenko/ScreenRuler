@@ -50,6 +50,7 @@ private slots:
 
 signals:
     void userClickCloseSig();
+    void needPaintCircleSig(Coords coords);
 };
 
 #endif // FORMFIELDS_H

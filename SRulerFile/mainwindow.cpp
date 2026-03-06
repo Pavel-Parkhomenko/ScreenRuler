@@ -58,14 +58,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     textPos->setText(QString("(%1,%2)").arg(0).arg(0));
     textPos->adjustSize();
 
-    setFocusPolicy(Qt::StrongFocus);
+    // setFocusPolicy(Qt::StrongFocus);
     showFullScreen();
-    setFocus();
+    // setFocus();
 
-    formFields = new FormFields(nullptr);
+    formFields = new FormFields();
     formFields->show();
-    formFields->setFocus();
+
     connect(formFields, &FormFields::userClickCloseSig, this, &MainWindow::userClickCloseSlot);
+    connect(formFields, &FormFields::needPaintCircleSig, this, &MainWindow::needPaintCircleSlot);
 
     x = screenW / 2;
     y = screenH / 2;
@@ -121,6 +122,33 @@ void MainWindow::userClickCloseSlot()
     this->close();
 }
 
+void MainWindow::paintCircles()
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(QPen(Qt::black, 1));
+
+    const int h = 10;
+    const int w = 10;
+
+    painter.setBrush(QBrush(QColor(252, 186, 3)));
+    painter.drawEllipse(coords.xNext - w / 2, coords.yNext - h / 2, w, h);
+
+    painter.setBrush(QBrush(Qt::red));
+    painter.drawEllipse(coords.xPrev - w / 2, coords.yPrev - h / 2, w, h);
+
+    painter.setBrush(QBrush(Qt::blue));
+    painter.drawEllipse(coords.xMove - w / 2, coords.yMove - h / 2, w, h);
+
+    update();
+}
+
+
+void MainWindow::needPaintCircleSlot(Coords coords)
+{
+    this->coords = coords;
+}
+
 void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
@@ -131,7 +159,6 @@ void MainWindow::paintEvent(QPaintEvent *)
 
     if (ctrlPress)
     {
-        qDebug() << "CTRL" << ctrlPress;
         QPainter painter(this);
         painter.setPen(QPen(Qt::red, 1));
 
@@ -174,6 +201,8 @@ void MainWindow::paintEvent(QPaintEvent *)
 
     prevY = y;
     prevX = x;
+
+    paintCircles();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

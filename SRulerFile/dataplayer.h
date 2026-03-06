@@ -46,11 +46,15 @@ public:
     bool getIsNewObj() const;
     void setIsNewObj(bool newIsNewObj);
 
+    bool getIsEdit() const;
+    void setIsEdit(bool newIsEdit);
+
 private:
     QString player;
     Coords coords;
     bool isChecked;
     bool isNewObj = false;
+    bool isEdit = false;
 };
 
 #endif // DATAPLAYER_H

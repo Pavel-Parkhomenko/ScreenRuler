@@ -40,7 +40,11 @@ private:
 
     void checkMove();
 
+    void paintCircles();
+    Coords coords;
+
 private slots:
     void userClickCloseSlot();
+    void needPaintCircleSlot(Coords coords);
 };
 #endif // MAINWINDOW_H
