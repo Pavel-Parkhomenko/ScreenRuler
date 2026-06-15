@@ -23,9 +23,9 @@ FormFields::FormFields(QWidget *parent) :
 {
     ui->setupUi(this);
 
-#ifdef Q_OS_LINUX
-    setAttribute(Qt::WA_TranslucentBackground);
-#endif
+// #ifdef Q_OS_LINUX
+//     setAttribute(Qt::WA_TranslucentBackground);
+// #endif
 
 #ifdef Q_OS_WIN
     // setAttribute(Qt::WA_StyledBackground);
@@ -34,7 +34,7 @@ FormFields::FormFields(QWidget *parent) :
 #endif
 
     this->setWindowTitle("Настройка");
-    this->setMinimumSize(350, 300);
+    this->setMinimumSize(350, 350);
 
     readJsonFile("DATA.json");
 
@@ -86,6 +86,10 @@ FormFields::FormFields(QWidget *parent) :
     QHBoxLayout *hlEdit = new QHBoxLayout();
     editName = new QLineEdit();
     editName->setFixedWidth(100);
+
+    QCheckBox *newNote = new QCheckBox("new");
+    connect(newNote, &QCheckBox::toggled, this, &FormFields::newNoteCheckBoxSlot);
+
     editCoords = new QLineEdit();
     editCoords->setEnabled(false);
 
@@ -98,6 +102,7 @@ FormFields::FormFields(QWidget *parent) :
     QPushButton *btnOk = new QPushButton("Подтвердить");
     QPushButton *btnClose = new QPushButton("Закрыть");
     hlBtn->addWidget(btnOk);
+    hlBtn->addWidget(newNote);
     hlBtn->addWidget(btnClose);
 
     connect(btnOk, &QPushButton::clicked, this, &FormFields::btnOkClickSlot);
@@ -120,8 +125,8 @@ FormFields::FormFields(QWidget *parent) :
 void FormFields::listItemClickSlot(QListWidgetItem *item)
 {
     int playerDataInd = item->data(Qt::UserRole + 1).toInt();
-    curPlayer->setIsEdit(false);
     curPlayer = &dataPlayers[playerDataInd];
+    backupPlayer = *curPlayer;
     curPlayer->setIsNewObj(false);
     curPlayer->setIsEdit(true);
 
@@ -147,6 +152,18 @@ void FormFields::btnCloseClickSlot()
 void FormFields::editNameSlot(const QString &text)
 {
     curPlayer->setPlayer(text);
+}
+
+void FormFields::newNoteCheckBoxSlot(bool state)
+{
+    if (state)
+    {
+        DataPlayer *tmpPlayer = new DataPlayer(*curPlayer);
+        *curPlayer = backupPlayer;
+        tmpPlayer->setIsNewObj(true);
+        tmpPlayer->setIsEdit(true);
+        curPlayer = tmpPlayer;
+    }
 }
 
 void FormFields::setNewCoords(double x, double y)

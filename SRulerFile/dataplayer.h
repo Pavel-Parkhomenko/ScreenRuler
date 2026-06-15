@@ -35,6 +35,9 @@ public:
     DataPlayer();
     DataPlayer(QString player, Coords *coords, bool isChecked);
 
+    DataPlayer(const DataPlayer &other);
+    DataPlayer &operator=(const DataPlayer &other);
+
     QString getPlayer() const;
     void setPlayer(const QString &newPlayer);
     Coords getCoords() const;

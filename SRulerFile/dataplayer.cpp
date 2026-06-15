@@ -50,6 +50,21 @@ DataPlayer::DataPlayer()
     this->isChecked = false;
 }
 
+DataPlayer::DataPlayer(const DataPlayer &other) {
+    this->player = other.player;
+    this->coords = other.coords;
+    this->isChecked = other.isChecked;
+}
+
+DataPlayer &DataPlayer::operator=(const DataPlayer &other) {
+    if (this != &other) {
+        this->player = other.player;
+        this->coords = other.coords;
+        this->isChecked = other.isChecked;
+    }
+    return *this;
+}
+
 void DataPlayer::setPartCoords(double x, double y, POS pos)
 {
     coords.setPos(x, y, pos);

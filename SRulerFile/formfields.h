@@ -31,6 +31,7 @@ private:
     QRadioButton *centerCheck;
 
     DataPlayer *curPlayer = nullptr;
+    DataPlayer backupPlayer;
 
     QVector<DataPlayer> dataPlayers;
 
@@ -47,6 +48,7 @@ private slots:
     void btnOkClickSlot();
     void btnCloseClickSlot();
     void editNameSlot(const QString &text);
+    void newNoteCheckBoxSlot(bool state);
 
 signals:
     void userClickCloseSig();
